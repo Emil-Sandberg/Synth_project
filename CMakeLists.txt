@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.29)
 project(Synth_project)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD  20)
 
 add_executable(main main.cpp
         input_base.h
@@ -12,15 +12,11 @@ add_executable(main main.cpp
         MyStream.cpp
         main.cpp)
 
-include(FetchContent)
-FetchContent_Declare(SFML GIT_REPOSITORY https://github.com/SFML/SFML.git
-        GIT_TAG 3.0.0
-        GIT_SHALLOW ON
-        EXCLUDE_FROM_ALL SYSTEM
-)
+set(SFML_STATIC_LIBRARIES TRUE)
+set(SFML_DIR "${CMAKE_SOURCE_DIR}/SFML/SFML-3.0.0/lib/cmake/SFML")
+set(Ogg_DIR "${CMAKE_SOURCE_DIR}/SFML/SFML-3.0.0/lib/cmake/Ogg")
 
-FetchContent_MakeAvailable(SFML)
+find_package(SFML 3 COMPONENTS System Window Graphics Audio REQUIRED)
 
-target_link_libraries(main SFML::System SFML::Window SFML::Graphics SFML::Network SFML::Audio)
-
+target_link_libraries(main SFML::System SFML::Window SFML::Graphics SFML::Audio)
 
