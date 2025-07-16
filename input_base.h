@@ -2,7 +2,7 @@
  * Lab 6, dt047g HT2024
  * @author Emil Sandberg
  * @date 2025-03-25
- * @brief Course project, a in real-time digital synthesizer using the external SFML 3.0 library
+ * @brief Course project, in real-time digital synthesizer using the external SFML 3.0 library
  * @file input_base.h
  */
 #ifndef SFML_PROJECT_INPUT_BASE_H
@@ -19,6 +19,7 @@
 /**
  * @brief Base class holding the necessary functions for every type of inputs
  */
+
 class input_base {
 public:
 
@@ -64,13 +65,13 @@ private:
 /**
  * @brief Used for creating toggleable buttons by making output a pointer to a boolean value
  */
-class input_button : public input_t<bool *> {
+class input_button final : public input_t<bool*> {
 public:
     /**
      * @param key The keyboard key
      * @param output The targeted bool variable
      */
-    input_button(sf::Keyboard::Key key, bool *output) : input_t<bool *>(key, output) {}
+    input_button(sf::Keyboard::Key key, bool *output) : input_t<bool*>(key, output) {}
 
     void action() override {
         *get_output() = !*get_output();
@@ -80,7 +81,7 @@ public:
 /**
  * @brief Used for handling all the notes on a keyboard by making output act as an index
  */
-class input_note : public input_t<int> {
+class input_note final : public input_t<int> {
 
 public:
     /**
@@ -88,29 +89,29 @@ public:
      * @param key The keyboard key
      * @param output The index of the notes pitch
      */
-    input_note(note_data *data, sf::Keyboard::Key key, int output) : input_t<int>(key, output), note(data) {}
+    input_note(sf::Keyboard::Key key, int output) : input_t<int>(key, output) {}
 
     void action() override {
         int pitch_class = get_output();
 
         //!calculates which note to play by shifting the inputs pitch class index based on the current octave position
-        auto note_index = pitch_class + (note->current_octave * SEMITONES_PER_OCTAVE);
-        if (!note->holding[note_index] && note_index < KEY_NUMBER) {
-            note->input_current_octave[get_output()] = note->current_octave;
-            note->volume[note_index] = 1;
-            note->holding[note_index] = true;
-            note->reachedMaxVol[note_index] = false;
+        auto note_index = pitch_class + (current_octave * SEMITONES_PER_OCTAVE);
+        if (!holding[note_index] && note_index < KEY_NUMBER) {
+            input_current_octave[pitch_class] = current_octave;
+            volume[note_index] = 1;
+            holding[note_index] = true;
+            reachedMaxVol[note_index] = false;
         }
     }
 
     //!Finds the correct note to release by checking the stored octave position from input_current_octave
     void release() override {
         auto pitch_class = get_output();
-        auto note_index = pitch_class + (note->input_current_octave[pitch_class] * SEMITONES_PER_OCTAVE);
-        note->holding[note_index] = false;
+        auto note_index = pitch_class + (input_current_octave[pitch_class] * SEMITONES_PER_OCTAVE);
+        holding[note_index] = false;
     }
 
-    note_data *note; //!< Pointer to Note data which holds the current states of each note
+    //note_data *note; //!< Pointer to Note data which holds the current states of each note
 };
 
 /**
@@ -119,7 +120,7 @@ public:
  * @tparam TNumeric The type of the range which in which the target variable can be modified
  */
 template<typename TNumeric>
-class modifier : public input_t<TNumeric> {
+class modifier final : public input_t<TNumeric> {
 
 public:
     /**
@@ -144,32 +145,40 @@ public:
 /**
  * @brief Container class for holding each input type
  */
+
+
 class input_container {
 public:
 
+
+    template<typename... T>
+    explicit input_container(T&&... args) {
+        (push(std::move(args)), ...);
+    }
+
     template<typename T>
-    void push(T object) {
-        inputs.push_back(std::make_unique<T>(object));
+    void push(T &&object) {
+        inputs.push_back(std::make_unique<T>(std::move(object)));
     }
 
     input_container() = default;
-
-    void is_released(sf::Event::KeyReleased event) {
+    bool is_released(const sf::Event::KeyReleased event) {
         for (auto &element: inputs) {
             if (element->input_match(event)) {
                 element->release();
-                break;
+                return true;
             }
-        }
+        }return false;
     }
 
-    void is_pressed(sf::Event::KeyPressed keyPressed) {
+    bool is_pressed(const sf::Event::KeyPressed keyPressed) {
         for (auto &element: inputs) {
             if (element->input_match(keyPressed)) {
                 element->action();
-                break;
+                return true;
             }
         }
+        return false;
     }
 
     std::vector<std::unique_ptr<input_base>> inputs;

@@ -22,8 +22,10 @@
 class MyStream : public sf::SoundStream {
 
 public:
+    MyStream() = default;
 
-    MyStream(sound_modifier_data *sound_modifier, note_data *note, const int &audioBufSize, const int &channelCount,const int &sampleRate);
+    static float note_to_freq(const int &reference_freq,const int &reference_note_pos,const int &note_pos);
+    MyStream(const int &audioBufSize, const int &channelCount,const int &sampleRate);
 private:
 
     bool onGetData(Chunk &data) override;
@@ -39,7 +41,7 @@ private:
     * \param note_pos key position of target note
      * \return the corresponding frequency of target note
     */
-    double note_to_freq(const int &reference_freq,const int &reference_note_pos,const int &note_pos) const;
+
 
     std::vector<sf::SoundChannel> channelMap{
             sf::SoundChannel::FrontLeft,
@@ -48,8 +50,8 @@ private:
     int audioBufSize;
     int channelCount;
     int sampleRate;
-    sound_modifier_data *sound_modifier;
-    note_data *note;
+    //sound_modifier_data *sound_modifier;
+    //note_data *note;
     std::vector<int16_t> m_samples;
     std::size_t m_currentSample{};
     double sample_phase_step{};

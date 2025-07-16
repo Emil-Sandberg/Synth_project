@@ -15,15 +15,16 @@
  * @class note_data
  * @brief Holds the states of each note
  */
-class note_data {
-public:
-    double phase[KEY_NUMBER] = {0}; //!< Keeps track of the samples current phase
-    double volume[KEY_NUMBER] = {0};
-    bool holding[KEY_NUMBER] = {false};
-    bool reachedMaxVol[KEY_NUMBER] = {false};
-    int current_octave = 4; //!< The current octave state of the Keyboard
-    int input_current_octave[KEYBOARD_NOTE_INPUTS] =  {0}; //!< Stores the current octave position when a key is pressed
-};
+//class note_data {
+
+inline float phase[KEY_NUMBER] = {}; //!< Keeps track of the samples current phase
+inline double volume[KEY_NUMBER] = {};
+inline bool holding[KEY_NUMBER] = {false};
+inline bool reachedMaxVol[KEY_NUMBER] = {false};
+inline int current_octave = 4; //!< The current octave state of the Keyboard
+inline int input_current_octave[KEYBOARD_NOTE_INPUTS] = {};
+//!< Stores the current octave position when a key is pressed
+//};
 
 
 #endif //SFML_PROJECT_NOTE_DATA_H
