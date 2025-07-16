@@ -112,7 +112,8 @@ Ett roligt tillägg hade varit om man visualiserade ljudvågens form under uppsp
 Det borde egentligen bara vara att man ta ut alla värden på samplingen som består
 av y-värden och rita upp dom från vänster till höger.
 
-En ny abstrakt klass som alla ljudvågsformer ärver från hade kanske också varit fint.
+Hade varit fint om jag hade implementerat en variabel i ljudvågsobjekten som hade kunnat 
+ändra frekvensen något för att få lite mer spännande harmonics. 
 
 I efterhand känns tangent-input_t rätt begränsat eftersom programmet i nuläget förlitar sig 
 på att det finns en numpad för att kunna modifera vissa funktioner. Samt 
